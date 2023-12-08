@@ -97,6 +97,7 @@ record Human(string Name, int Age)
 int x = 0;
 object locker = new();
 AutoResetEvent waitHandler = new AutoResetEvent(true);
+Mutex mutexObj = new();
 for(int i=1;i<6;i++)
 {
     Thread myThread = new(Print);
@@ -104,7 +105,7 @@ for(int i=1;i<6;i++)
     myThread.Start();
 }
 
-//void Print()
+/*//void Print()
 //{
 //    lock (locker)
 //    {
@@ -132,7 +133,7 @@ for(int i=1;i<6;i++)
  * Следующий поток в очереди готовности объекта блокирует данный объект. А все потоки, которые вызвали метод Wait, 
  * остаются в очереди ожидания, пока не получат сигнал от метода Monitor.PulseAll, посланного владельцем блокировки
  */
-//void Print()
+/*//void Print()
 //{
 //    bool acquiredLock=false;
 //    try
@@ -157,7 +158,7 @@ for(int i=1;i<6;i++)
  * Set() - задает сигнальное состояние объекта, позволяя одному или нескольким ожидающим потокам продолжить работу
  * WaitOne() - задает несигнальное состояние и блокирует текущий поток, пока текущий объект AutoResetEvent не получит сигнал
  */
-void Print()
+/*void Print()
 {
     waitHandler.WaitOne();
     x = 1;
@@ -168,4 +169,30 @@ void Print()
         Thread.Sleep(100);
     }
     waitHandler.Set();
+}*/
+//void Print()
+//{
+//    lock (locker)
+//    {
+//        x = 1;
+//        for (int i = 1; i < 101; i++)
+//        {
+//            Console.WriteLine($"{Thread.CurrentThread.Name}: {x}");
+//            x++;
+//            Thread.Sleep(100);
+//        }
+//    }
+//}
+
+void Print()
+{
+    mutexObj.WaitOne();
+    x = 1;
+    for(int i=1;i<6; i++)
+    {
+        Console.WriteLine($"{Thread.CurrentThread.Name}: {x}");
+        x++;
+        Thread.Sleep(100);
+    }
+    mutexObj.ReleaseMutex();
 }
